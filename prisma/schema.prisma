@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int      @id @default(autoincrement()) 
+  email      String   @unique // Унікальний email
+  hash       String   // Хешований пароль
+
+  firstName  String?  
+  lastName   String?  
+
+  books      Book[]   // Зв’язок з книгами користувача
+  // requests   SwapRequest[] // Зв’язок із запитами на обмін
+
+  createdAt  DateTime @default(now()) 
+  updatedAt  DateTime @updatedAt
+
+  @@map("users")
+}
+model Book {
+  id          String   @id @default(uuid())
+  title       String   
+  author      String   
+  description String?  
+  genre       String   
+  ownerId     Int   // ID власника книги
+  owner       User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  status      BookStatus @default(AVAILABLE) // Статус книги
+  createdAt   DateTime @default(now()) 
+  updatedAt   DateTime @updatedAt 
+
+  @@map("books")
+}
+
+enum BookStatus {
+  AVAILABLE // Книга доступна для обміну
+  REQUESTED // Є запит на обмін
+  SWAPPED // Книга вже обміняна
+}

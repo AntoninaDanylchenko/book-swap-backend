@@ -9,35 +9,34 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id         Int      @id @default(autoincrement()) 
-  email      String   @unique // Унікальний email
-  hash       String   // Хешований пароль
+  id         String   @id @default(auto())  @map("_id") @db.ObjectId
+  email      String   @unique
+  hash       String  
 
   firstName  String?  
   lastName   String?  
 
-  books      Book[]   // Зв’язок з книгами користувача
-  // requests   SwapRequest[] // Зв’язок із запитами на обмін
+  books      String[] // Масив ID книг, які належать користувачу
 
   createdAt  DateTime @default(now()) 
   updatedAt  DateTime @updatedAt
 
   @@map("users")
 }
+
 model Book {
-  id          String   @id @default(uuid())
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
   title       String   
   author      String   
   description String?  
   genre       String   
-  ownerId     Int   // ID власника книги
-  owner       User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  status      BookStatus @default(AVAILABLE) // Статус книги
+  ownerId     String   // Просто зберігаємо ID без @relation
+  status      BookStatus @default(AVAILABLE) 
   createdAt   DateTime @default(now()) 
   updatedAt   DateTime @updatedAt 
 
@@ -45,7 +44,7 @@ model Book {
 }
 
 enum BookStatus {
-  AVAILABLE // Книга доступна для обміну
-  REQUESTED // Є запит на обмін
-  SWAPPED // Книга вже обміняна
+  AVAILABLE 
+  REQUESTED 
+  SWAPPED 
 }

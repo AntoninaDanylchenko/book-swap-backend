@@ -34,7 +34,8 @@ model Book {
   title       String   
   author      String   
   description String?  
-  genre       String   
+  genre       String  
+  image       String 
   ownerId     String   // Просто зберігаємо ID без @relation
   status      BookStatus @default(AVAILABLE) 
   createdAt   DateTime @default(now()) 

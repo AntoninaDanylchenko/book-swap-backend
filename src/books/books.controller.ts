@@ -6,7 +6,9 @@ import {
   Param,
   Patch,
   Post,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { JwtGuard } from 'src/auth/guard';
 import { BooksService } from './books.service';
@@ -15,6 +17,7 @@ import {
   CreateBookDto,
   EditBookDto,
 } from './dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @UseGuards(JwtGuard)
 @Controller('books')
@@ -44,13 +47,16 @@ export class BooksController {
   }
 
   @Post()
+  @UseInterceptors(FileInterceptor('image')) // Додаємо інтерцептор для файлів
   createBook(
     @GetUser('id') userId: string,
     @Body() dto: CreateBookDto,
+    @UploadedFile() file: Express.Multer.File, // Отримуємо файл
   ) {
     return this.booksService.createBook(
       userId,
       dto,
+      file,
     );
   }
 

@@ -15,9 +15,9 @@ export class CreateBookDto {
   @IsOptional()
   description?: string;
 
-  @IsString()
-  @IsNotEmpty()
-  image: string;
+  // @IsString()
+  // @IsNotEmpty()
+  // image: string;
 
   @IsString()
   @IsNotEmpty()

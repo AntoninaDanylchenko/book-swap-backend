@@ -4,10 +4,14 @@ import {
   CreateBookDto,
   EditBookDto,
 } from './dto';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Injectable()
 export class BooksService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private cloudinaryService: CloudinaryService,
+  ) {}
 
   getBooks() {
     return this.prisma.book.findMany();
@@ -29,11 +33,21 @@ export class BooksService {
   async createBook(
     userId: string,
     dto: CreateBookDto,
+    file: Express.Multer.File,
   ) {
+    let imageUrl = null;
+
+    if (file) {
+      imageUrl =
+        await this.cloudinaryService.uploadImage(
+          file,
+        ); // Використовуємо сервіс для завантаження
+    }
     const newBook = await this.prisma.book.create(
       {
         data: {
           ownerId: userId,
+          image: imageUrl,
           ...dto,
         },
       },

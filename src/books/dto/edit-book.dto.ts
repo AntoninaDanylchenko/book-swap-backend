@@ -15,9 +15,9 @@ export class EditBookDto {
   @IsOptional()
   description?: string;
 
-  @IsString()
-  @IsOptional()
-  image?: string;
+  // @IsString()
+  // @IsOptional()
+  // image?: string;
 
   @IsString()
   @IsOptional()

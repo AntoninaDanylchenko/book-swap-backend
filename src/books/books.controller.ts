@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   Param,
   Patch,
   Post,
@@ -36,22 +37,16 @@ export class BooksController {
   }
 
   @Get(':id')
-  getBookById(
-    @GetUser('id') userId: string,
-    @Param('id') bookId: string,
-  ) {
-    return this.booksService.getBookById(
-      userId,
-      bookId,
-    );
+  getBookById(@Param('id') bookId: string) {
+    return this.booksService.getBookById(bookId);
   }
 
   @Post()
-  @UseInterceptors(FileInterceptor('image')) // Додаємо інтерцептор для файлів
+  @UseInterceptors(FileInterceptor('image'))
   createBook(
     @GetUser('id') userId: string,
     @Body() dto: CreateBookDto,
-    @UploadedFile() file: Express.Multer.File, // Отримуємо файл
+    @UploadedFile() file: Express.Multer.File,
   ) {
     return this.booksService.createBook(
       userId,
@@ -61,19 +56,23 @@ export class BooksController {
   }
 
   @Patch(':id')
+  @UseInterceptors(FileInterceptor('image'))
   editBookById(
     @GetUser('id') userId: string,
     @Body() dto: EditBookDto,
+    @UploadedFile() file: Express.Multer.File,
     @Param('id') bookId: string,
   ) {
     return this.booksService.editBookById(
       userId,
       dto,
+      file,
       bookId,
     );
   }
 
   @Delete(':id')
+  @HttpCode(204)
   deleteBookById(
     @GetUser('id') userId: string,
     @Param('id') bookId: string,
